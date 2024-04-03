@@ -12,7 +12,7 @@ struct CalculatorModel {
     
     var currentNum = 0.0
     var previousNum = 0.0
-    var operation = ""
+    var operation: String?
     var function = ""
     
     mutating func performOperation(with newNumber: Double) -> Double {
@@ -55,7 +55,6 @@ struct CalculatorModel {
     
     mutating func setOperation(_ newOperation: String) {
         operation = newOperation
-        previousNum = currentNum
     }
     
     mutating func setFunction(_ newFunction: String) {
@@ -66,5 +65,6 @@ struct CalculatorModel {
         currentNum = 0
         previousNum = 0
         operation = ""
+        function = ""
     }
 }

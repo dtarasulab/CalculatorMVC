@@ -19,23 +19,25 @@ class ViewController: UIViewController {
     }
     
     var performingMath = false
+    var chainedEquals = false
     var model = CalculatorModel()
+    var temp = 0.0
     
     @IBAction func numberButtonPressed(_ sender: UIButton) {
         guard let numPressed = sender.title(for: .normal) else { return }
         
-        if performingMath {
+        if performingMath || chainedEquals {
             displayLabel.text = (numPressed == ".") ? "0." : numPressed
-            model.currentNum = Double(displayLabel.text!)!
             performingMath = false
+            chainedEquals = false
         } else {
             if displayLabel.text == "0" {
                 displayLabel.text = (numPressed == ".") ? "0." : numPressed
             } else if !(displayLabel.text!.contains(".") && numPressed == ".") {
                 displayLabel.text! += numPressed
-                model.currentNum = Double(displayLabel.text!)!
             }
         }
+        model.currentNum = Double(displayLabel.text!)!
     }
     
     @IBAction func operatorButtonPressed(_ sender: UIButton) {
@@ -43,16 +45,28 @@ class ViewController: UIViewController {
         
         switch operation {
             case "=":
+            model.currentNum = Double(displayLabel.text!)!
+            if !chainedEquals {
+                temp = model.currentNum
                 let result = model.performOperation(with: model.currentNum)
                 displayLabel.text = String(result)
+                chainedEquals = true
+            } else {
+                model.previousNum = model.currentNum
+                model.currentNum = temp
+                let result = model.performOperation(with: model.currentNum)
+                displayLabel.text = String(result)
+            }
             case "AC":
                 model.reset()
                 displayLabel.text = "0"
                 performingMath = false
+                chainedEquals = false
             default:
                 model.setOperation(operation)
                 model.previousNum = Double(displayLabel.text!)!
                 performingMath = true
+                chainedEquals = false
         }
     }
     
